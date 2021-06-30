@@ -1,0 +1,135 @@
+{
+  "CONFIGURATION": {
+    "GENERAL": {
+      "TOOLS": "~/Tools",
+      "TOOLPATH": "",
+      "UPDATE_RESOLVERS": true,
+      "PROXY_URL": "http://127.0.0.1:8080/"
+    },
+    "GOOLANG_VARS": {
+        "GOROOT": "/usr/local/go",
+        "GOPATH": "$HOME/go",
+        "PATH": "$GOPATH/bin:$GOROOT/bin:$HOME/.local/bin:$PATH"
+    },
+    "TOOLS": {
+      "AMASS_CONFIG": "/.config/amass/config.ini",
+      "GITHUB_TOKENS": "${tools}/.github_tokens"
+    },
+    "OSINT": {
+      "OSINT": true,            
+      "GOOGLE_DORKS": true,      
+      "GITHUB_DORKS": true,      
+      "METADATA": true,         
+      "EMAILS": true,            
+      "DOMAIN_INFO": true,      
+      "METAFINDER_LIMIT": 20 
+    },
+    "SUBDOMAINS": {
+      "SUBCRT":true,
+      "SUBANALYTICS":true,
+      "SUBBRUTE":true,
+      "SUBSCRAPING":true,
+      "SUBPERMUTE":true,
+      "SUBTAKEOVER":true,
+      "SUBRECURSIVE":true,
+      "SUB_RECURSIVE_PASSIVE":false,
+      "ZONETRANSFER":true,
+      "S3BUCKETS":true
+    },
+    "WEBDETECTION": {
+      "WEBPROBESIMPLE": true,        
+      "WEBPROBEFULL": true,            
+      "WEBSCREENSHOT": true,               
+      "UNCOMMON_PORTS_WEB": "81,300,591,593,832,981,1010,1311,1099,2082,2095,2096,2480,3000,3128,3333,4243,4567,4711,4712,4993,5000,5104,5108,5280,5281,5601,5800,6543,7000,7001,7396,7474,8000,8001,8008,8014,8042,8060,8069,8080,8081,8083,8088,8090,8091,8095,8118,8123,8172,8181,8222,8243,8280,8281,8333,8337,8443,8500,8834,8880,8888,8983,9000,9001,9043,9060,9080,9090,9091,9200,9443,9502,9800,9981,10000,10250,11371,12443,15672,16080,17778,18091,18092,20720,32000,55440,55672", 
+      "AXIOM_SCREENSHOT_MODULE": "webscreenshot"
+    },
+    "HOST": {
+      "FAVICON": true,
+      "PORTSCANNER": true,
+      "PORTSCAN_PASSIVE": true,
+      "PORTSCAN_ACTIVE": true,
+      "CLOUD_IP": true
+    },
+    "WEBANALYTICS": {
+      "WAF_DETECTION": true,
+      "NUCLEICHECK": true,
+      "URL_CHECK": true,
+      "URL_GF": true,
+      "URL_EXT": true,
+      "JSCHECKS": true,
+      "PARAMS": true,
+      "FUZZ": true,
+      "CMS_SCANNER": true,
+      "WORDLIST": true
+    },
+    "VULNERABILITIES": {
+      "XSS": true,
+      "CORS": true,
+      "TEST_SSL": true,
+      "OPEN_REDIRECT": true,
+      "SSRF_CHECKS": true,
+      "CRLF_CHECKS": true,
+      "LFI": true,
+      "SSTI": true,
+      "SQLI": true,
+      "BROKENLINKS": true,
+      "SPRAY": true,
+      "BYPASSER4XX": true,
+      "COMM_INJ": true
+    },
+    "EXTRAFEATURES": {
+      "NOTIFICATION": false ,
+      "SOFT_NOTIFICATION": false,
+      "DEEP": false,
+      "DEEP_LIMIT": 1000,
+      "DIFF": false,
+      "REMOVETMP": false,
+      "REMOVELOG": false,
+      "PROXY": false,
+      "SENDZIPNOTIFY": false,
+      "PRESERVE": false     
+    },
+    "HTTPOPTIONS": {
+      "HEADER": "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:72.0) Gecko/20100101 Firefox/72.0"
+    },
+    "THREADS": {
+      "FFUF": 40,
+      "HTTPX": 50,
+      "HTTPX_UNCOMMONPORTS": 100,
+      "GOSPIDER": 50,
+      "GITDORKER": 5,
+      "BRUTESPRAY_TH": 20,
+      "BRUTESPRAY_CONCURRENCE": 10,
+      "ARJUN": 20,
+      "GAUPLUS": 10,
+      "DALFOX": 200,
+      "PUREDNS_PUBLIC_LIMIT": 0, 
+      "PUREDNS_TRUSTED_LIMIT": 400,
+      "DIRDAR": 200,
+      "WEBSCREENSHOT": 200,
+      "RESOLVE_DOMAINS": 150
+    },
+    "TIMEOUTS": { 
+      "CMSSCAN": 3600,
+      "FFUF_MAXTIME": 900,            
+      "HTTPX": 10,         
+      "HTTPX_UNCOMMONPORTS": 10 
+    },
+    "WORDLISTS": {
+      "FUZZ": "${tools}/fuzz_wordlist.txt",
+      "LFI": "${tools}/lfi_wordlist.txt",
+      "SSTI": "${tools}/ssti_wordlist.txt",
+      "SUBS": "${tools}/subdomains.txt",
+      "SUBSBIG": "${tools}/subdomains_big.txt",
+      "RESOLVERS": "${tools}/resolvers.txt",
+      "TRUSTEDRESOLVERS": "${tools}/resolvers_trusted.txt"
+    },
+    "AXIOMFLEET": {
+      "LAUNCH": false,
+      "NAME": "regoftw",
+      "COUNT": 5,
+      "REGIONS": "",
+      "SHUTDOWN": true
+    }
+  }
+}
