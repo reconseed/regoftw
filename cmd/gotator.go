@@ -7,13 +7,15 @@ import (
 )
 
 var (
-	flDomains        string
-	flPermutations   string
-	flDepth          uint
-	flIterateNumbers uint
-	flPrefixes       bool
-	flextractDomains bool
-	flThreads        uint
+	flDomains            string
+	flPermutations       string
+	flDepth              uint
+	flIterateNumbers     uint
+	flPrefixes           bool
+	flextractDomains     bool
+	fladvancedOption     bool
+	flminimizeDuplicates bool
+	flThreads            uint
 )
 
 func gotatorCmd() *cobra.Command {
@@ -32,6 +34,8 @@ func gotatorCmd() *cobra.Command {
 	gotatorCMD.Flags().UintVarP(&flIterateNumbers, "numbers", "n", 0, "Permute the numbers found in the list of permutations")
 	gotatorCMD.Flags().BoolVar(&flPrefixes, "prefixes", false, "Adding gotator prefixes to permutations")
 	gotatorCMD.Flags().BoolVar(&flextractDomains, "md", false, "Extract domains and subdomains from subdomains found in 'sub' list")
+	gotatorCMD.Flags().BoolVar(&fladvancedOption, "adv", false, "Advanced option. Generate permutations words with subdomains and words with -. And joins permutation word in the back (depth 1)")
+	gotatorCMD.Flags().BoolVar(&flminimizeDuplicates, "mindup", false, "Set this flag to minimize duplicates. (For heavy workloads, it is recommended to activate this flag)")
 	gotatorCMD.Flags().UintVarP(&flThreads, "threads", "t", 10, "Max Go routines")
 
 	gotatorCMD.Flags().SortFlags = false
@@ -40,7 +44,8 @@ func gotatorCmd() *cobra.Command {
 }
 
 func runGotator(cmd *cobra.Command, args []string) {
-	core.StartGotator(flDomains, flPermutations, flDepth, flIterateNumbers, flPrefixes, flextractDomains, flThreads)
+	core.StartGotator(flDomains, flPermutations, flDepth, flIterateNumbers, flPrefixes, flextractDomains,
+		fladvancedOption, flminimizeDuplicates, flThreads)
 }
 
 func init() {

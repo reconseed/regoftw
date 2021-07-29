@@ -11,7 +11,7 @@ func Banner() {
 		data := GreenColor
 		rand.Seed(time.Now().UTC().UnixNano())
 
-		if rand.Intn(2) != 1 {
+		if rand.Intn(1) != 1 {
 			data += `
 	██████╗ ███████╗ ██████╗  ██████╗ ███████╗████████╗██╗    ██╗
 	██╔══██╗██╔════╝██╔════╝ ██╔═══██╗██╔════╝╚══██╔══╝██║    ██║

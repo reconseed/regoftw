@@ -14,7 +14,11 @@ import (
 )
 
 var (
-	file utils.File
+	gotatorFile        utils.File
+	ALLDOMAINS         []string
+	PERMUTATIONS       []string
+	MINIMIZEDUPLICATES bool
+	ADVANCEDOPTION     bool
 )
 
 func isDomain(domain string) bool {
@@ -32,27 +36,25 @@ func isCCSLDDomain(domain string) bool {
 	return false
 }
 
-func removeNumbers(string1 string, string2 string) (string, string) {
+func removeNumbers(element string) string {
 	pattern := regexp.MustCompile("\\d+")
-	aux1 := string1
-	aux2 := string2
-	for _, data := range pattern.FindStringSubmatch(string1) {
-		aux1 = strings.Replace(aux1, data, "", -1)
+	aux := element
+	for _, data := range pattern.FindStringSubmatch(element) {
+		aux = strings.Replace(aux, data, "", -1)
 	}
-	for _, data := range pattern.FindStringSubmatch(string2) {
-		aux2 = strings.Replace(aux2, data, "", -1)
-	}
-	return aux1, aux2
+	return aux
 }
 
 func getJoins(domain string, perm string, firstTime bool) []string {
 	joins := []string{".", "-", ""}
 	allNumbers := []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
 	numberPrefix := false
-	for _, n := range allNumbers {
-		if strings.HasPrefix(domain, n) {
-			numberPrefix = true
-			break
+	if MINIMIZEDUPLICATES {
+		for _, n := range allNumbers {
+			if strings.HasPrefix(domain, n) {
+				numberPrefix = true
+				break
+			}
 		}
 	}
 	// It is only possible to be a domain the first time (firstTime reduces comopopulations at each step)
@@ -61,11 +63,11 @@ func getJoins(domain string, perm string, firstTime bool) []string {
 	} else if numberPrefix {
 		for _, n := range allNumbers {
 			if strings.HasSuffix(perm, n) {
-				joins = []string{} // We don't want 99 permutation and a domain like 100.test.com
+				joins = []string{} // We don't want 99 permutation and a subdomain like 100.test.com
 				break
 			}
 		}
-	} else {
+	} else if MINIMIZEDUPLICATES {
 		firstElement := strings.Split(domain, ".")[0]
 		if firstElement == perm {
 			joins = []string{}
@@ -73,58 +75,67 @@ func getJoins(domain string, perm string, firstTime bool) []string {
 			joins = []string{".", "-"}
 		} else {
 			// Remove numbers to chek
-			aux1, aux2 := removeNumbers(firstElement, perm)
-			if aux1 == aux2 {
+			subdomainFirstElement := removeNumbers(firstElement)
+			newPermutation := removeNumbers(perm)
+			if subdomainFirstElement == newPermutation {
 				joins = []string{}
+			} else if strings.HasSuffix(subdomainFirstElement, newPermutation) {
+				joins = []string{"."}
 			}
 		}
 	}
 	return joins
 }
 
-func permutator(domain string, permutations []string, depth uint, firtstTime bool) {
+func permutator(domain string, depth uint, firtstTime bool) {
 	if depth < 1 {
 		return
 	}
-	for _, perm := range permutations {
+	for _, perm := range PERMUTATIONS {
 		if perm == "" {
 			continue
 		}
 		joins := getJoins(domain, perm, firtstTime)
 		for _, j := range joins {
 			newSubDomain := perm + j + domain
-			file.WriteLn(newSubDomain)
-			permutator(newSubDomain, permutations, depth-1, false)
+			if utils.ListContainsElement(ALLDOMAINS, newSubDomain) == -1 {
+				gotatorFile.WriteLn(newSubDomain)
+				permutator(newSubDomain, depth-1, false)
+			}
 		}
-		if depth == 1 && firtstTime { // First iteration joins permutation word in the back
+		if depth == 1 && firtstTime && ADVANCEDOPTION { // First iteration joins permutation word in the back
 			if !isDomain(domain) && !isCCSLDDomain(domain) {
 				domSplit := strings.Split(domain, ".")
 				firstElement := domSplit[0]
-				aux1, aux2 := removeNumbers(firstElement, perm)
-				if aux1 != aux2 {
-					joins = []string{}
+				subdomainFirstElement := removeNumbers(firstElement)
+				newPermutation := removeNumbers(perm)
+				if subdomainFirstElement != newPermutation && !strings.HasSuffix(subdomainFirstElement, newPermutation) {
 					newSubDomain := firstElement + perm + "." + strings.Join(domSplit[1:], ".")
-					file.WriteLn(newSubDomain)
+					if utils.ListContainsElement(ALLDOMAINS, newSubDomain) == -1 {
+						gotatorFile.WriteLn(newSubDomain)
+					}
 					newSubDomain = firstElement + "-" + perm + "." + strings.Join(domSplit[1:], ".")
-					file.WriteLn(newSubDomain)
+					if utils.ListContainsElement(ALLDOMAINS, newSubDomain) == -1 {
+						gotatorFile.WriteLn(newSubDomain)
+					}
 				}
 			}
 		}
 	}
 }
 
-func worker(domain string, permutations []string, depth uint) {
-	file.WriteLn(domain)
-	permutator(domain, permutations, depth, true)
+func worker(domain string, depth uint) {
+	gotatorFile.WriteLn(domain)
+	permutator(domain, depth, true)
 }
 
 func configureDepth(depth uint) uint {
 	auxDepth := depth
 	if depth > 3 {
-		utils.PrintErrorIfVerbose("The maximum is 3. Configuring")
+		println("[-] The maximum is 3. Configuring")
 		auxDepth = 3
 	} else if depth < 1 {
-		utils.PrintErrorIfVerbose("The minimum is 1. Configuring")
+		println("[-] The minimum is 1. Configuring")
 		auxDepth = 1
 	}
 	return auxDepth
@@ -132,16 +143,20 @@ func configureDepth(depth uint) uint {
 
 func generateDomains(flDomains string, flextractDomains bool) []string {
 	var auxiliarDomains []string
-	fh1, err := os.Open(flDomains)
-	if err != nil {
-		utils.PrintError(err.Error())
-		os.Exit(1)
+	fh1, err1 := os.Open(flDomains)
+	if err1 != nil {
+		panic(err1)
 	}
 	defer fh1.Close()
+
 	scanner1 := bufio.NewScanner(fh1)
 	for scanner1.Scan() {
 		domain := fmt.Sprintf("%s", scanner1.Text())
+		domain = strings.Trim(domain, " ")
 		if len(strings.Split(domain, ".")) < 2 {
+			continue
+		}
+		if utils.ListContainsElement(auxiliarDomains, domain) > -1 {
 			continue
 		}
 		auxiliarDomains = append(auxiliarDomains, domain)
@@ -152,6 +167,7 @@ func generateDomains(flDomains string, flextractDomains bool) []string {
 					break
 				}
 				aux2 := strings.Join(aux, ".")
+				aux2 = strings.Trim(aux2, " ")
 				if utils.ListContainsElement(auxiliarDomains, aux2) == -1 {
 					auxiliarDomains = append(auxiliarDomains, aux2)
 				}
@@ -163,21 +179,26 @@ func generateDomains(flDomains string, flextractDomains bool) []string {
 	return auxiliarDomains
 }
 
-func generatePermutations(flPermutations string, flPrefixes bool, prefixes []string, permutatorNumber uint, domains []string) []string {
+func generatePermutations(flPermutations string, flPrefixes bool, permutatorNumber uint) []string {
+	prefixes := []string{"1rer", "2", "2tty", "admin", "api", "app", "bbs", "blog", "cdn", "cloud", "cuali", "demo", "dev", "dev2", "email", "exchange", "forum", "ftp", "gov", "govyty", "gw", "host", "m", "mail", "mail2", "mx1", "mysql", "news", "ns", "ns1", "owa", "portal", "pre", "pro", "prod", "prueba", "qa", "remote", "secure", "server", "shop", "smtp", "store", "support", "test", "test", "tty", "vpn", "vps", "web", "ww1", "ww42", "www", "www2"}
 	var permutations []string
 	pattern := regexp.MustCompile("\\d+")
 	if flPermutations != "" {
-		fh2, err := os.Open(flPermutations)
-		if err != nil {
-			utils.PrintError(err.Error())
-			os.Exit(1)
+		fh2, err2 := os.Open(flPermutations)
+		if err2 != nil {
+			panic(err2)
 		}
 		defer fh2.Close()
 		scanner2 := bufio.NewScanner(fh2)
 		for scanner2.Scan() {
 			line := fmt.Sprintf("%s", scanner2.Text())
+			line = strings.Trim(line, " ")
+			if utils.ListContainsElement(permutations, line) > -1 {
+				continue
+			}
 			permutations = append(permutations, line)
-			data := pattern.FindStringSubmatch(line)
+			permutatorGuion(&permutations, line, permutatorNumber)
+			data := pattern.FindAllStringSubmatch(line, -1)
 			if len(data) > 0 && permutatorNumber > 0 {
 				permutatorNumbers(&permutations, line, data, permutatorNumber)
 			}
@@ -187,20 +208,27 @@ func generatePermutations(flPermutations string, flPrefixes bool, prefixes []str
 		for _, prefix := range prefixes {
 			if utils.ListContainsElement(permutations, prefix) == -1 {
 				permutations = append(permutations, prefix)
+				data := pattern.FindAllStringSubmatch(prefix, -1)
+				if len(data) > 0 && permutatorNumber > 0 {
+					permutatorNumbers(&permutations, prefix, data, permutatorNumber)
+				}
 			}
 		}
 	}
-	for _, dom := range domains {
-		if !isDomain(dom) && !isCCSLDDomain(dom) {
-			aux := strings.Split(dom, ".")
-			total := len(aux) - 2
-			aux = aux[:total]
-			for _, a := range aux {
-				if utils.ListContainsElement(permutations, a) == -1 {
-					permutations = append(permutations, a)
-					data := pattern.FindStringSubmatch(a)
-					if len(data) > 0 && permutatorNumber > 0 {
-						permutatorNumbers(&permutations, a, data, permutatorNumber)
+	if ADVANCEDOPTION {
+		for _, dom := range ALLDOMAINS {
+			if !isDomain(dom) && !isCCSLDDomain(dom) {
+				aux := strings.Split(dom, ".")
+				total := len(aux) - 2
+				aux = aux[:total]
+				for _, a := range aux {
+					permutatorGuion(&permutations, a, permutatorNumber)
+					if utils.ListContainsElement(permutations, a) == -1 {
+						permutations = append(permutations, a)
+						data := pattern.FindAllStringSubmatch(a, -1)
+						if len(data) > 0 && permutatorNumber > 0 {
+							permutatorNumbers(&permutations, a, data, permutatorNumber)
+						}
 					}
 				}
 			}
@@ -209,18 +237,36 @@ func generatePermutations(flPermutations string, flPrefixes bool, prefixes []str
 	return permutations
 }
 
-func permutatorNumbers(permutations *[]string, permutation string, dataToReplace []string, permutatorNumber uint) {
+func permutatorGuion(permutations *[]string, data string, permutatorNumber uint) {
+	if !ADVANCEDOPTION {
+		return
+	}
+	pattern := regexp.MustCompile("\\d+")
+	if strings.Contains(data, "-") {
+		for _, newSplit := range strings.Split(data, "-") {
+			if utils.ListContainsElement(*permutations, newSplit) == -1 {
+				*permutations = append(*permutations, newSplit)
+				data := pattern.FindAllStringSubmatch(newSplit, -1)
+				if len(data) > 0 && permutatorNumber > 0 {
+					permutatorNumbers(permutations, newSplit, data, permutatorNumber)
+				}
+			}
+		}
+	}
+}
+
+func permutatorNumbers(permutations *[]string, permutation string, dataToReplace [][]string, permutatorNumber uint) {
 	defer func() {
 		recover()
 		for _, numberToRlace := range dataToReplace {
-			intNumber, err := strconv.Atoi(numberToRlace)
+			intNumber, err := strconv.Atoi(numberToRlace[0])
 			if err != nil {
 				continue
 			}
 			for i := +1; i <= int(permutatorNumber); i++ {
-				*permutations = append(*permutations, strings.Replace(permutation, numberToRlace, strconv.Itoa(intNumber+i), -1))
+				*permutations = append(*permutations, strings.Replace(permutation, numberToRlace[0], strconv.Itoa(intNumber+i), -1))
 				if (intNumber - i) >= 0 {
-					*permutations = append(*permutations, strings.Replace(permutation, numberToRlace, strconv.Itoa(intNumber-i), -1))
+					*permutations = append(*permutations, strings.Replace(permutation, numberToRlace[0], strconv.Itoa(intNumber-i), -1))
 				}
 			}
 		}
@@ -228,43 +274,40 @@ func permutatorNumbers(permutations *[]string, permutation string, dataToReplace
 }
 
 func StartGotator(flDomains string, flPermutations string, flDepth uint, flIterateNumbers uint,
-	flPrefixes bool, flextractDomains bool, flThreads uint) {
+	flPrefixes bool, flextractDomains bool, fladvancedOption bool, flminimizeDuplicates bool, flThreads uint) {
 	ctx := conf.GetCTX()
 	workPlace := ctx.GetWorkPlace()
-	prefixes := []string{"qa", "dev", "dev1", "demo", "test", "prueba", "mysql",
-		"pre", "pro", "prod", "cuali", "www", "ftp", "smtp", "mail"}
 	intDepth := configureDepth(flDepth)
 
 	utils.PrintInfoIfVerbose("Checking and generating domains list")
-	auxiliarDomains := generateDomains(flDomains, flextractDomains)
-	if len(auxiliarDomains) <= 0 {
+	ALLDOMAINS = generateDomains(flDomains, flextractDomains)
+	if len(ALLDOMAINS) <= 0 {
 		utils.PrintError("No valid domains/subdomains found")
 		os.Exit(1)
 	}
 
 	utils.PrintInfoIfVerbose("Generating permutations list")
-	permutations := generatePermutations(flPermutations, flPrefixes, prefixes, flIterateNumbers, auxiliarDomains)
+	PERMUTATIONS = generatePermutations(flPermutations, flPrefixes, flIterateNumbers)
 	threads := int(flThreads)
-	if len(auxiliarDomains) < threads { // Avoid having more threads than subdomains
-		threads = len(auxiliarDomains)
+	if len(ALLDOMAINS) < threads { // Avoid having more threads than subdomains
+		threads = len(ALLDOMAINS)
 	}
 	fileName := workPlace + "/permutations-" + time.Now().Format("2006.01.01_15:04") + ".txt"
-	file = utils.GetFile(fileName)
-
+	gotatorFile = utils.GetFile(fileName)
 	utils.PrintInfoIfVerbose("Working in permutations...")
 	guardThreads := make(chan struct{}, threads)
 	var wg sync.WaitGroup
-	for _, domain := range auxiliarDomains {
+	for _, domain := range ALLDOMAINS {
 		guardThreads <- struct{}{}
 		wg.Add(1)
 		go func(d string) {
-			worker(d, permutations, intDepth)
+			worker(d, intDepth)
 			<-guardThreads
 			wg.Done()
 		}(domain)
 	}
 	wg.Wait()
-	file.Close()
+	gotatorFile.Close()
 	utils.PrintInfoIfVerbose("Check file: " + fileName + "\n")
 
 	utils.PrintOK("Done!")

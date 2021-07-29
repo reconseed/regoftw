@@ -96,6 +96,22 @@ DNS wordlists generator.
 
 [Gotator](https://github.com/Josue87/gotator)
 
+## **roboxtractor**
+
+Extract endpoints marked as disallow in robots files to generate wordlists.
+
+### <u>Flags</u>
+
+| Long flag | Short Flag | Description | Mandatory | Default Value |
+|-----------|------------|-------------|-----------|---------------|
+|           |            |             |           |               |
+|           |            |             |           |               |
+|           |            |             |           |               |
+
+### <u>Original tool</u>
+
+[RoboXtractor](https://github.com/Josue87/roboxtractor)
+
 ## **recon**
 
 Recon mode. It automates the entire process of reconnaisance for you.
