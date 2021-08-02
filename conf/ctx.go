@@ -3,36 +3,40 @@ package conf
 type Context interface {
 	GetVersion() string
 	GetWorkPlace() string
+	GetDomain() string
 	IsVerbose() bool
 	SilentMode() bool
 }
 
 type context struct {
-	version   string
-	workplace string
-	verbose   bool
-	silent    bool
+	version string
+	output  string
+	domain  string
+	verbose bool
+	silent  bool
 }
 
 var VERSION = "0.1b"
 
 var ctx Context = &context{
-	version:   VERSION,
-	workplace: "",
-	verbose:   false,
-	silent:    false,
+	version: VERSION,
+	output:  "",
+	domain:  "",
+	verbose: false,
+	silent:  false,
 }
 
 var generate = false
 
-func GenerateCTX(workplace string, verbose bool, silent bool) {
+func GenerateCTX(output string, domain string, verbose bool, silent bool) {
 	if !generate {
 		generate = true
 		ctx = &context{
-			version:   VERSION,
-			workplace: workplace,
-			verbose:   verbose,
-			silent:    silent,
+			version: VERSION,
+			output:  output,
+			domain:  domain,
+			verbose: verbose,
+			silent:  silent,
 		}
 	}
 }
@@ -42,7 +46,11 @@ func (ctx *context) GetVersion() string {
 }
 
 func (ctx *context) GetWorkPlace() string {
-	return ctx.workplace
+	return ctx.output
+}
+
+func (ctx *context) GetDomain() string {
+	return ctx.domain
 }
 
 func (ctx *context) IsVerbose() bool {

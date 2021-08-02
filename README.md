@@ -33,100 +33,28 @@ regoftw is a recon tool ...
 
 ...
 
-# Commands
+# Modes
 
-With regoftw you can execute different commands. These have different flags to configure. Let's start with the global ones.
+With regoftw you can execute different modes:
+
+* Passive
+* Active
+* Full
+
+
+# Flags
 
 **Global flags**
 
 | Long flag | Short Flag | Description | Mandatory | Default Value |
 |-----------|------------|-------------|-----------|---------------|
-|  workplace | w  |   reconGOFTW WorkPlace  |   Yes  |         |
+|  output | o  |   reconGOFTW output folder  |   Yes  |         |
+|  domain | d  |   Domain to analyze  |   No  |         |
 |  verbose | v    |    Verbose mode         |   No   |  false  |
 |  silent | s   |  regoftw doesn't show banner |   No   |  false  |
-| version | | Show regoftw version | No | |
+| version | | Show regoftw version | No | false |
 
-Now for each command.
 
-## **analyticsrelationships**
-
-Search relationships in URLs.
-
-### <u>Flags</u>
-
-| Long flag | Short Flag | Description | Mandatory | Default Value |
-|-----------|------------|-------------|-----------|---------------|
-|           |            |             |           |               |
-|           |            |             |           |               |
-|           |            |             |           |               |
-
-### <u>Original tool</u>
-
-[AnalyticsRelationships](https://github.com/Josue87/AnalyticsRelationships)
-
-## **emailfinder**
-
-Search emails through Bing.
-
-### <u>Flags</u>
-
-| Long flag | Short Flag | Description | Mandatory | Default Value |
-|-----------|------------|-------------|-----------|---------------|
-|           |            |             |           |               |
-|           |            |             |           |               |
-|           |            |             |           |               |
-
-### <u>Original tool</u>
-
-[EmailFinder](https://github.com/Josue87/EmailFinder)
-
-## **gotator**
-
-DNS wordlists generator.
-
-### <u>Flags</u>
-
-| Long flag | Short Flag | Description | Mandatory | Default Value |
-|-----------|------------|-------------|-----------|---------------|
-|           |            |             |           |               |
-|           |            |             |           |               |
-|           |            |             |           |               |
-
-### <u>Original tool</u>
-
-[Gotator](https://github.com/Josue87/gotator)
-
-## **roboxtractor**
-
-Extract endpoints marked as disallow in robots files to generate wordlists.
-
-### <u>Flags</u>
-
-| Long flag | Short Flag | Description | Mandatory | Default Value |
-|-----------|------------|-------------|-----------|---------------|
-|           |            |             |           |               |
-|           |            |             |           |               |
-|           |            |             |           |               |
-
-### <u>Original tool</u>
-
-[RoboXtractor](https://github.com/Josue87/roboxtractor)
-
-## **recon**
-
-Recon mode. It automates the entire process of reconnaisance for you.
-
-### <u>Flags</u>
-
-| Long flag | Short Flag | Description | Mandatory | Default Value |
-|-----------|------------|-------------|-----------|---------------|
-|           |            |             |           |               |
-|           |            |             |           |               |
-|           |            |             |           |               |
-
-### <u>Original tool</u>
-
-[reconFTW](https://github.com/six2dez/reconftw)
 
 # 👾 Usage
 

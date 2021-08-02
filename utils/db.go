@@ -68,7 +68,7 @@ func (mgr *manager) GenerateDataDomain(domain string) bool {
 		if err != nil {
 			success = false
 		}
-		statement.Exec(domain, f, 0) // 0 = the function has not started, -1 error, 1 function finished
+		statement.Exec(domain, f, 0) // 0 = the function has not started, -1 error, 1 function running, 2 function finished
 	}
 	return success
 }

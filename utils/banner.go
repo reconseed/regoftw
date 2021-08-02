@@ -10,8 +10,7 @@ func Banner() {
 	if !conf.GetCTX().SilentMode() {
 		data := GreenColor
 		rand.Seed(time.Now().UTC().UnixNano())
-
-		if rand.Intn(1) != 1 {
+		if rand.Intn(2) != 1 {
 			data += `
 	██████╗ ███████╗ ██████╗  ██████╗ ███████╗████████╗██╗    ██╗
 	██╔══██╗██╔════╝██╔════╝ ██╔═══██╗██╔════╝╚══██╔══╝██║    ██║

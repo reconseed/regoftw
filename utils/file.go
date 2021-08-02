@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -56,6 +57,18 @@ func CreateDirectory(path string) bool {
 		success = false
 	}
 	return success
+}
+
+func ReadFile(path string, fileName string) string {
+	if !ExistFile(path, fileName) {
+		PrintErrorIfVerbose("File " + fileName + " in " + path + " not found")
+		return ""
+	}
+	data, err := ioutil.ReadFile(joinPath(path, fileName))
+	if err != nil {
+		return ""
+	}
+	return string(data)
 }
 
 func WriteFile(path string, fileName string, data string) bool {

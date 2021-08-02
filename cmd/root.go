@@ -9,15 +9,16 @@ import (
 
 var (
 	workplace string
+	domain    string
 	verbose   bool
 	silent    bool
 	rootCmd   = &cobra.Command{
 		Use:   "regoftw [options]",
 		Short: "regoftw - Recon Tool",
 		Long:  "regoftw - Awesome Recon Tool",
-		Example: `regoftw recon -w /tmp/test --passive
-regoftw emailfinder -w /tmp/test -d example.com
-regoftw gotator -w /tmp/test -d domainx.txt -p permutations.txt
+		Example: `regoftw active -w /tmp/test -d example.com
+regoftw passive -w /tmp/test -d example.com
+regoftw full -w /tmp/test -d example.com
 ...`,
 		Version: conf.GetCTX().GetVersion(),
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -30,8 +31,9 @@ regoftw gotator -w /tmp/test -d domainx.txt -p permutations.txt
 func init() {
 	rootCmd.Flags().SortFlags = false
 	rootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
-	rootCmd.PersistentFlags().StringVarP(&workplace, "workplace", "w", "", "reconGOFTW WorkPlace (mandatory)")
-	rootCmd.MarkPersistentFlagRequired("workplace")
+	rootCmd.PersistentFlags().StringVarP(&workplace, "output", "o", "", "reconGOFTW WorkPlace (mandatory)")
+	rootCmd.MarkPersistentFlagRequired("output")
+	rootCmd.PersistentFlags().StringVarP(&domain, "domain", "d", "", "Domain to analyze")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Verbose mode")
 	rootCmd.PersistentFlags().BoolVarP(&silent, "silent", "s", false, "regoftw doesn't show banner")
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
@@ -39,7 +41,7 @@ func init() {
 }
 
 func UpdateConfig() {
-	conf.GenerateCTX(workplace, verbose, silent)
+	conf.GenerateCTX(workplace, domain, verbose, silent)
 	if !utils.ExistFolder(workplace) && !utils.CreateDirectory(workplace) {
 		panic("[-] Workplace is not found and it cannot be created.")
 	}
