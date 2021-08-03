@@ -81,37 +81,16 @@ func ExecuteTasks(tasks []string) {
 }
 
 // TODO: Decide what type of function to use
-type StringFunction struct {
+type RegoFunction struct {
 	Function func(params []string)
 	Args     []string
 }
 
-type IntFunction struct {
-	Function func(params []int)
-	Args     []int
+type ExecuteRegoFunction struct {
+	Functions []RegoFunction
 }
 
-type ExecuteInt struct {
-	Functions []IntFunction
-}
-
-type ExecuteString struct {
-	Functions []StringFunction
-}
-
-func (execute *ExecuteInt) Run() {
-	var wg sync.WaitGroup
-	for _, f := range execute.Functions {
-		wg.Add(1)
-		go func(f1 func(params []int), params []int) {
-			executeIntTask(f1, params)
-			wg.Done()
-		}(f.Function, f.Args)
-	}
-	wg.Wait()
-}
-
-func (execute *ExecuteString) Run() {
+func (execute *ExecuteRegoFunction) Run() {
 	var wg sync.WaitGroup
 	for _, f := range execute.Functions {
 		wg.Add(1)
@@ -124,7 +103,7 @@ func (execute *ExecuteString) Run() {
 }
 
 // Launch various functions with its arguments
-func ExecuteGOListTask(execute ExecuteString) {
+func ExecuteGOListTask(execute ExecuteRegoFunction) {
 	var wg sync.WaitGroup
 	for _, f := range execute.Functions {
 		wg.Add(1)

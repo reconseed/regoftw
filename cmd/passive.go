@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"regoftw/functions"
 	"regoftw/utils"
 
 	"github.com/spf13/cobra"
@@ -19,13 +20,19 @@ func passiveCmd() *cobra.Command {
 }
 
 func runPassive(cmd *cobra.Command, args []string) {
-	// TEST
-	urls := [][]string{
-		{"url1",
-			"test1", " hello"},
-		{"url2",
-			"test2", "hello tester"}}
-	utils.ExecuteOnlineFunctions(urls)
+	// // Online Option with bash functions
+	// // TEST
+	// urls := [][]string{
+	// 	{"url1",
+	// 		"test1", " hello"},
+	// 	{"url2",
+	// 		"test2", "hello tester"}}
+	// utils.ExecuteOnlineFunctions(urls)
+	// Go option
+	var functionsToExecute utils.ExecuteRegoFunction
+	function := utils.RegoFunction{Function: functions.GenerateResolvers, Args: nil}
+	functionsToExecute.Functions = append(functionsToExecute.Functions, function)
+	functionsToExecute.Run()
 }
 
 func init() {

@@ -20,7 +20,7 @@ type manager struct {
 
 var mgr Manager = nil
 
-func GetManager(path string) Manager {
+func GetDBManager(path string) Manager {
 	if mgr == nil {
 		mgr = newManager(path)
 	}
