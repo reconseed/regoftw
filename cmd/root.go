@@ -22,8 +22,8 @@ regoftw full -w /tmp/test -d example.com
 ...`,
 		Version: conf.GetCTX().GetVersion(),
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			UpdateConfig()
 			utils.Banner()
+			UpdateConfig()
 		},
 	}
 )
@@ -34,6 +34,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&workplace, "output", "o", "", "reconGOFTW WorkPlace (mandatory)")
 	rootCmd.MarkPersistentFlagRequired("output")
 	rootCmd.PersistentFlags().StringVarP(&domain, "domain", "d", "", "Domain to analyze")
+	rootCmd.MarkPersistentFlagRequired("domain")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Verbose mode")
 	rootCmd.PersistentFlags().BoolVarP(&silent, "silent", "s", false, "regoftw doesn't show banner")
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
@@ -45,6 +46,17 @@ func UpdateConfig() {
 	if !utils.ExistFolder(workplace) && !utils.CreateDirectory(workplace) {
 		panic("[-] Workplace is not found and it cannot be created.")
 	}
+	outputDomain := workplace + "/" + domain
+	if !utils.ExistFolder(outputDomain) && !utils.CreateDirectory(outputDomain) {
+		panic("[-] Domain Workplace is not found and it cannot be created.")
+	}
+	dbManager := utils.GetDBManager()
+	if dbManager.ExistDomain(domain) {
+		utils.PrintInfo("Domain exists in DB inside the output directory")
+	} else {
+		dbManager.GenerateDataDomain(domain)
+	}
+
 }
 
 func Execute() error {

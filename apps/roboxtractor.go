@@ -1,9 +1,7 @@
 package app
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"regexp"
 	"regoftw/conf"
 	"regoftw/utils"
@@ -76,27 +74,27 @@ func waybackMachine(urlCheck string, endpoints []string, mode uint) {
 	lastURL := ""
 	for startYear < currentYear {
 		timestamp, err := wayback.ParseTimestamp(layoutISO, fmt.Sprintf("%04d-01-01", startYear))
-		wbMsg := fmt.Sprintf("%s. Wayback Machine Year %d", urlCheck, startYear)
+		// wbMsg := fmt.Sprintf("%s. Wayback Machine Year %d", urlCheck, startYear)
 		startYear += 1
 		if err != nil {
-			utils.PrintInfoIfVerbose(fmt.Sprintf("WB %d - %s", startYear, err.Error()))
+			// utils.PrintInfoIfVerbose(fmt.Sprintf("WB %d - %s", startYear, err.Error()))
 			continue
 		}
 		_, t, err := wayback.AvailableAt(urlCheck, timestamp)
 		if err != nil {
-			utils.PrintInfoIfVerbose(fmt.Sprintf("WB %d - %s", startYear, err.Error()))
+			// utils.PrintInfoIfVerbose(fmt.Sprintf("WB %d - %s", startYear, err.Error()))
 			continue
 		}
 		date := fmt.Sprintf("%04d%02d%02d%02d%02d%02d", t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second())
 		finalurl := url + date + "if_/" + urlCheck
 		if finalurl == lastURL {
-			utils.PrintInfoIfVerbose(fmt.Sprintf("Skiping year %d. Same snapshot as previous", startYear-1))
+			// utils.PrintInfoIfVerbose(fmt.Sprintf("Skiping year %d. Same snapshot as previous", startYear-1))
 			continue
 		}
 		lastURL = finalurl
 		response := utils.GetRawResponse(finalurl + robots)
 
-		endpoints = parseResponse(wbMsg, urlCheck, response, endpoints, mode)
+		endpoints = parseResponse(urlCheck, response, endpoints, mode)
 
 	}
 }
@@ -109,21 +107,20 @@ func thisWork(urlCheck string, mode uint, wayback bool) bool {
 		urlCheck = urlCheck[0 : len(urlCheck)-1]
 	}
 	response := utils.GetRawResponse(urlCheck + robots)
-	endpoints = parseResponse(urlCheck, urlCheck, response, endpoints, mode)
+	endpoints = parseResponse(urlCheck, response, endpoints, mode)
 	if wayback {
 		waybackMachine(urlCheck, endpoints, mode)
 	}
 	return success
 }
 
-func parseResponse(msg string, urlCheck string, response string, endpoints []string, mode uint) []string {
-	utils.PrintOKIfVerbose("200 " + msg)
+func parseResponse(urlCheck string, response string, endpoints []string, mode uint) []string {
 	allDisallows := getDisallows(response)
 	if len(allDisallows) == 0 {
-		utils.PrintInfoIfVerbose("Nothing found here...")
+		// utils.PrintInfoIfVerbose("Nothing found here...")
 		return endpoints
 	}
-	utils.PrintInfoIfVerbose(fmt.Sprintf("Total entries marked as disallow: %d. Parsing and cleaning...", len(allDisallows)))
+	// utils.PrintInfoIfVerbose(fmt.Sprintf("Total entries marked as disallow: %d. Parsing and cleaning...", len(allDisallows)))
 	for _, entry := range allDisallows {
 		endpoints = treatEndpoint(urlCheck, entry[0], endpoints, mode)
 	}
@@ -132,7 +129,7 @@ func parseResponse(msg string, urlCheck string, response string, endpoints []str
 
 func startJob(urlCheck string, mode uint, wayback bool) {
 	if len(strings.Split(urlCheck, ".")) <= 1 {
-		utils.PrintErrorIfVerbose("URL format error " + urlCheck)
+		// utils.PrintErrorIfVerbose("URL format error " + urlCheck)
 		return
 	}
 	if !strings.HasPrefix(urlCheck, "http") {
@@ -149,14 +146,8 @@ func StartRoboxtractor(url string, mode uint, waybackmachine bool) {
 	workPlace := ctx.GetWorkPlace()
 	fileName := workPlace + "/roboxtractor-" + time.Now().Format("2006.01.01_15:04") + ".txt"
 	roboxFile = utils.GetFile(fileName)
-	if url != "" {
-		startJob(url, mode, waybackmachine)
-	} else {
-		scanner := bufio.NewScanner(os.Stdin)
-		for scanner.Scan() {
-			startJob(scanner.Text(), mode, waybackmachine)
-		}
-	}
+	startJob(url, mode, waybackmachine)
 	roboxFile.Close()
 	utils.PrintInfoIfVerbose("Check file: " + fileName + "\n")
+	utils.PrintOKIfVerbose("Roboxtractor Done!")
 }

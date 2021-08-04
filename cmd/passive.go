@@ -30,6 +30,7 @@ func runPassive(cmd *cobra.Command, args []string) {
 	// utils.ExecuteOnlineFunctions(urls)
 	// Go option
 	var functionsToExecute utils.ExecuteRegoFunction
+	// If we have a good ctx, we probably do not need to pass parameters
 	function := utils.RegoFunction{Function: functions.GenerateResolvers, Args: nil}
 	functionsToExecute.Functions = append(functionsToExecute.Functions, function)
 	functionsToExecute.Run()

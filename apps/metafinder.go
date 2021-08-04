@@ -14,18 +14,18 @@ func getMetadata(workPlace string, url string, res chan []exiftool.FileMetadata,
 	docName := name[len(name)-1]
 	fileName := workPlace + "/" + docName
 	if !utils.DownloadFile(url, fileName) {
-		utils.PrintErrorIfVerbose("Error downloading " + docName)
+		// utils.PrintErrorIfVerbose("Error downloading " + docName)
 		res <- nil
 		return
 	}
 	et, err := exiftool.NewExiftool()
 	if err != nil {
-		utils.PrintErrorIfVerbose("Error downloading " + docName)
+		// utils.PrintErrorIfVerbose("Error downloading " + docName)
 		res <- nil
 		return
 	}
 	defer et.Close()
-	utils.PrintInfoIfVerbose(docName + " has been downloaded")
+	// utils.PrintInfoIfVerbose(docName + " has been downloaded")
 	fileInfo := et.ExtractMetadata(fileName)
 	utils.DeleteFile(workPlace, docName)
 	<-guardThreads
@@ -35,12 +35,11 @@ func getMetadata(workPlace string, url string, res chan []exiftool.FileMetadata,
 func ExtractMetadata(domain string, total int, threads int) {
 	ctx := conf.GetCTX()
 	workPlace := ctx.GetWorkPlace() + "/" + domain
-	utils.CreateDirectory(workPlace)
 	urls := utils.BingFiles(domain, total)
 	var authors []string
 	var software []string
 
-	utils.PrintInfoIfVerbose(fmt.Sprintf("Total documents found: %d", len(urls)))
+	utils.PrintInfoIfVerbose(fmt.Sprintf("Metafinder total documents found: %d", len(urls)))
 	guardThreads := make(chan struct{}, threads)
 	for _, url := range urls {
 		guardThreads <- struct{}{}
@@ -72,5 +71,5 @@ func ExtractMetadata(domain string, total int, threads int) {
 
 	utils.WriteFileFromList(workPlace, "metadata_authors.txt", authors)
 	utils.WriteFileFromList(workPlace, "metadata_software.txt", software)
-	utils.PrintOK("Done!")
+	utils.PrintOKIfVerbose("Metafinder done!")
 }
