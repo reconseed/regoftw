@@ -59,6 +59,7 @@ type General struct {
 	TOOLPATH         string `json:"TOOLPATH"`
 	UPDATE_RESOLVERS bool   `json:"UPDATE_RESOLVERS"`
 	PROXY_URL        string `json:"PROXY_URL"`
+	DIF              string `json:"DIF"`
 }
 
 type Golangvars struct {

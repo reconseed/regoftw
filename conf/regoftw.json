@@ -4,7 +4,8 @@
       "TOOLS": "~/Tools",
       "TOOLPATH": "",
       "UPDATE_RESOLVERS": true,
-      "PROXY_URL": "http://127.0.0.1:8080/"
+      "PROXY_URL": "http://127.0.0.1:8080/",
+      "DIF": true
     },
     "GOOLANG_VARS": {
         "GOROOT": "/usr/local/go",

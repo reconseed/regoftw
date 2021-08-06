@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"regoftw/functions"
-	"regoftw/utils"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -21,11 +20,15 @@ func activeCmd() *cobra.Command {
 
 func runActive(cmd *cobra.Command, args []string) {
 	//Metadata Example
-	var functionsToExecute utils.ExecuteRegoFunction
+	// var functionsToExecute utils.ExecuteRegoFunction
 	// If we have a good ctx, we probably do not need to pass parameters
-	function := utils.RegoFunction{Function: functions.ExtractMetadata, Args: []string{domain}}
-	functionsToExecute.Functions = append(functionsToExecute.Functions, function)
-	functionsToExecute.Run()
+	for _, d := range domainsToCheck {
+		fmt.Println(d)
+		// function := utils.RegoFunction{Function: functions.ExtractMetadata, Args: []string{d}}
+		// functionsToExecute.Functions = append(functionsToExecute.Functions, function)
+		// functionsToExecute.Run()
+	}
+
 }
 
 func init() {

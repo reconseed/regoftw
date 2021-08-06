@@ -54,9 +54,10 @@ func (mgr *manager) CheckFunctionStatus(domain string, function string) int {
 	return status
 }
 
+// Exist dif mode to allow run to find new data
 func (mgr *manager) CanRunFunction(domain string, function string) bool {
 	canRun := false
-	if mgr.CheckFunctionStatus(domain, function) == 0 {
+	if mgr.CheckFunctionStatus(domain, function) <= 0 {
 		canRun = true
 	}
 	return canRun
