@@ -27,7 +27,7 @@ func getMetadata(workPlace string, url string, res chan []exiftool.FileMetadata,
 	defer et.Close()
 	// utils.PrintInfoIfVerbose(docName + " has been downloaded")
 	fileInfo := et.ExtractMetadata(fileName)
-	utils.DeleteFile(workPlace, docName)
+	utils.DeleteFileInPath(workPlace, docName)
 	<-guardThreads
 	res <- fileInfo
 }

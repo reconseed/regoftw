@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"regoftw/conf"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -54,11 +55,17 @@ func (mgr *manager) CheckFunctionStatus(domain string, function string) int {
 	return status
 }
 
-// Exist dif mode to allow run to find new data
 func (mgr *manager) CanRunFunction(domain string, function string) bool {
+	// If incremental mode is set up > go ahead
+	if conf.GetCTX().IsIncremental() {
+		return true
+	}
 	canRun := false
 	if mgr.CheckFunctionStatus(domain, function) <= 0 {
 		canRun = true
+	}
+	if !canRun {
+		PrintInfoIfVerbose(strings.Title(function) + " has already been executed for " + domain + " and incremental mode (-i) hasn't been set up")
 	}
 	return canRun
 }

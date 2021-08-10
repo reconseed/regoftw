@@ -46,15 +46,16 @@ With regoftw you can execute different modes:
 
 **Global flags**
 
-| Long flag | Short Flag | Description | Mandatory | Default Value |
-|-----------|------------|-------------|-----------|---------------|
-|  output | o  |   reconGOFTW output folder  |   Yes  |         |
-|  domain | d  |   Domain to analyze  |   No*  |         |
-|  domains | D  |   File with domains to analyze. Absolute path or local path starting with ./ |   No*  |         |
-|  conf | c |   Configuration file. Absolute path or local path starting with ./ |   No\*\*  |         |
-|  verbose | v    |    Verbose mode         |   No   |  false  |
-|  silent | s   |  regoftw doesn't show banner |   No   |  false  |
-| version | | Show regoftw version | No | false |
+| Long flag | Short Flag | Description | Default Value |
+|-----------|------------|-------------|---------------|
+|  output | o  |   regoFTW output folder  |    ~/regoftw/reports      |
+|  domain | d  |   Domain to analyze **\*** |    -      |
+|  domains | D  |   File with domains to analyze. Absolute path or local path starting with ./ **\*** |  -     |
+|  conf | c |   Configuration file. Absolute path or local path starting with ./ **\*\***  |    -     |
+| incremental | i | If a previous scanner exists, add any new data found. | false |
+|  verbose | v    |    Verbose mode         |    false  |
+|  silent | s   |  regoftw doesn't show banner |    false  |
+| version | | Show regoftw version | false |
 
 *You need to define either **domain** or **domains**. If both are defined, only domain will be taken into account.
 <br>\*\* If no configuration file is specified, a default one is used.

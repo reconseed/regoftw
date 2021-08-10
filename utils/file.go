@@ -15,7 +15,7 @@ func joinPath(path string, fileName string) string {
 	return file
 }
 
-func ExistFile(path string, fileName string) bool {
+func ExistFileInPath(path string, fileName string) bool {
 	exist := true
 	file := joinPath(path, fileName)
 	_, err := os.Stat(file)
@@ -25,7 +25,16 @@ func ExistFile(path string, fileName string) bool {
 	return exist
 }
 
-func CreateFile(path string, fileName string) bool {
+func ExistFile(fileName string) bool {
+	exist := true
+	_, err := os.Stat(fileName)
+	if os.IsNotExist(err) {
+		exist = false
+	}
+	return exist
+}
+
+func CreateFileInPath(path string, fileName string) bool {
 	success := true
 	file := joinPath(path, fileName)
 	f, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY, 0644)
@@ -37,7 +46,7 @@ func CreateFile(path string, fileName string) bool {
 	return success
 }
 
-func DeleteFile(path string, fileName string) bool {
+func DeleteFileInPath(path string, fileName string) bool {
 	success := true
 	err := os.Remove(joinPath(path, fileName))
 	if err != nil {
@@ -46,8 +55,17 @@ func DeleteFile(path string, fileName string) bool {
 	return success
 }
 
+func DeleteFolder(path string) bool {
+	success := true
+	err := os.RemoveAll(path)
+	if err != nil {
+		success = false
+	}
+	return success
+}
+
 func ExistFolder(path string) bool {
-	return ExistFile(path, "")
+	return ExistFileInPath(path, "")
 }
 
 func CreateDirectory(path string) bool {
@@ -59,8 +77,8 @@ func CreateDirectory(path string) bool {
 	return success
 }
 
-func ReadFile(path string, fileName string) string {
-	if !ExistFile(path, fileName) {
+func ReadFileInPath(path string, fileName string) string {
+	if !ExistFileInPath(path, fileName) {
 		PrintErrorIfVerbose("File " + fileName + " in " + path + " not found")
 		return ""
 	}
@@ -71,11 +89,23 @@ func ReadFile(path string, fileName string) string {
 	return string(data)
 }
 
+func ReadFile(fileName string) string {
+	if !ExistFile(fileName) {
+		PrintErrorIfVerbose("File " + fileName + " not found")
+		return ""
+	}
+	data, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return ""
+	}
+	return string(data)
+}
+
 func WriteFile(path string, fileName string, data string) bool {
 	var file *os.File
 	var err error
-	if !ExistFile(path, fileName) {
-		if !CreateFile(path, fileName) {
+	if !ExistFileInPath(path, fileName) {
+		if !CreateFileInPath(path, fileName) {
 			return false
 		}
 		file, err = os.OpenFile(joinPath(path, fileName), os.O_RDWR, 0644)
@@ -102,8 +132,8 @@ func WriteFile(path string, fileName string, data string) bool {
 func WriteFileFromList(path string, fileName string, data []string) bool {
 	var file *os.File
 	var err error
-	if !ExistFile(path, fileName) {
-		if !CreateFile(path, fileName) {
+	if !ExistFileInPath(path, fileName) {
+		if !CreateFileInPath(path, fileName) {
 			return false
 		}
 		file, err = os.OpenFile(joinPath(path, fileName), os.O_RDWR, 0644)

@@ -7,7 +7,6 @@ import (
 func ExtractMetadata(params []string) {
 	dbmanager := utils.GetDBManager()
 	if !dbmanager.CanRunFunction(params[0], "metafinder") {
-		utils.PrintInfoIfVerbose("Metafinder has already been executed")
 		return
 	}
 	dbmanager.UpdateStatus(params[0], "metafinder", 1)

@@ -14,8 +14,9 @@ var (
 	workplace      string
 	domain         string
 	domainsFile    string
-	configFile     string
+	configFile     string // TODO: Generate the configuration file in install mode and use that path?
 	domainsToCheck []string
+	incremental    bool
 	verbose        bool
 	silent         bool
 	rootCmd        = &cobra.Command{
@@ -30,7 +31,15 @@ regoftw passive -v -w /tmp/test -D ./targets.txt
 		Version: conf.GetCTX().GetVersion(),
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			utils.Banner()
-			UpdateConfig()
+			utils.CheckLatestVersion()
+			if cmd.Name() != "install" {
+				if !utils.ExistFolder(conf.REGOPATH) {
+					utils.PrintError(`Installation folder not found
+|__ Please run: regoftw install`)
+					os.Exit(0)
+				}
+				UpdateConfig()
+			}
 		},
 	}
 )
@@ -38,11 +47,11 @@ regoftw passive -v -w /tmp/test -D ./targets.txt
 func init() {
 	rootCmd.Flags().SortFlags = false
 	rootCmd.SetHelpCommand(&cobra.Command{Hidden: true})
-	rootCmd.PersistentFlags().StringVarP(&workplace, "output", "o", "", "reconGOFTW WorkPlace (mandatory)")
-	rootCmd.MarkPersistentFlagRequired("output")
+	rootCmd.PersistentFlags().StringVarP(&workplace, "output", "o", conf.REGOPATH+"/reports", "regoFTW WorkPlace.")
 	rootCmd.PersistentFlags().StringVarP(&domain, "domain", "d", "", "Domain to analyze")
 	rootCmd.PersistentFlags().StringVarP(&domainsFile, "domains", "D", "", "File with domains to analyze. Absolute path or local path starting with ./")
 	rootCmd.PersistentFlags().StringVarP(&configFile, "conf", "c", "", "Configuration file. Absolute path or local path starting with ./")
+	rootCmd.PersistentFlags().BoolVarP(&incremental, "incremental", "i", false, "If a previous scanner exists, add any new data found.")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Verbose mode")
 	rootCmd.PersistentFlags().BoolVarP(&silent, "silent", "s", false, "regoftw doesn't show banner")
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
@@ -59,10 +68,7 @@ func generateDomains() {
 	if domain != "" {
 		domainsToCheck = append(domainsToCheck, domain)
 	} else {
-		data := strings.Split(domainsFile, "/")
-		fileName := data[len(data)-1]
-		path := strings.Join(data[0:len(data)-1], "/")
-		fileContent := utils.ReadFile(path, fileName)
+		fileContent := utils.ReadFile(domainsFile)
 		if fileContent == "" {
 			os.Exit(1)
 		}
@@ -86,7 +92,7 @@ func generateDomains() {
 }
 
 func generateFolders() {
-	conf.GenerateCTX(workplace, domain, verbose, silent)
+	conf.GenerateCTX(workplace, domainsToCheck, incremental, verbose, silent)
 	if !utils.ExistFolder(workplace) && !utils.CreateDirectory(workplace) {
 		utils.PrintError("Workplace is not found and it cannot be created.")
 		os.Exit(1)
@@ -100,7 +106,7 @@ func generateFolders() {
 			os.Exit(1)
 		}
 		if dbManager.ExistDomain(d) {
-			utils.PrintInfo("Domain " + d + " exists in DB inside the output directory")
+			utils.PrintInfoIfVerbose("Domain " + d + " exists in DB inside the output directory")
 		} else {
 			dbManager.GenerateDataDomain(d)
 		}
@@ -108,12 +114,10 @@ func generateFolders() {
 }
 
 func generateConfig() {
+	// Generate the configuration file in install mode and use that path?
 	noConfigFile := true
 	if configFile != "" {
-		splitConfig := strings.Split(domainsFile, "/")
-		configName := splitConfig[len(splitConfig)-1]
-		path := strings.Join(splitConfig[0:len(splitConfig)-1], "/")
-		if utils.ExistFile(path, configName) {
+		if utils.ExistFile(domainsFile) {
 			conf.GenerateConfiguration(configFile)
 			noConfigFile = false
 		}
