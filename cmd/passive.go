@@ -13,13 +13,13 @@ func passiveCmd() *cobra.Command {
 		Short:   "Passive mode",
 		Long:    `Passive mode`,
 		Example: `regoftw passive`,
-		Run:     runPassive,
+		Run:     runPassiveMode,
 	}
 
 	return passiveCMD
 }
 
-func runPassive(cmd *cobra.Command, args []string) {
+func runPassiveMode(cmd *cobra.Command, args []string) {
 	// // Online Option with bash functions
 	// // TEST
 	// urls := [][]string{

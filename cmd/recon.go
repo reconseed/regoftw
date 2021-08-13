@@ -8,19 +8,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func activeCmd() *cobra.Command {
-	activeCMD := &cobra.Command{
-		Use:     "active",
-		Short:   "Active mode",
-		Long:    `Avtive mode`,
-		Example: `regoftw active`,
-		Run:     runActive,
+func reconCmd() *cobra.Command {
+	reconCMD := &cobra.Command{
+		Use:     "recon",
+		Short:   "Recon mode",
+		Long:    `Recon mode`,
+		Example: `regoftw recon`,
+		Run:     runReconMode,
 	}
 
-	return activeCMD
+	return reconCMD
 }
 
-func runActive(cmd *cobra.Command, args []string) {
+func runReconMode(cmd *cobra.Command, args []string) {
 	//Metadata Example
 	var functionsToExecute utils.ExecuteRegoFunction
 	// If we have a good ctx, we probably do not need to pass parameters
@@ -34,5 +34,5 @@ func runActive(cmd *cobra.Command, args []string) {
 }
 
 func init() {
-	rootCmd.AddCommand(activeCmd())
+	rootCmd.AddCommand(reconCmd())
 }

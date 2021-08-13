@@ -11,21 +11,22 @@ import (
 
 // Check to add this vars in ctx or similar
 var (
-	workplace      string
-	domain         string
-	domainsFile    string
-	configFile     string // TODO: Generate the configuration file in install mode and use that path?
-	domainsToCheck []string
-	incremental    bool
-	verbose        bool
-	silent         bool
-	rootCmd        = &cobra.Command{
+	workplace         string
+	domain            string
+	domainsFile       string
+	excludeSubdomains string
+	configFile        string // TODO: Generate the configuration file in install mode and use that path?
+	domainsToCheck    []string
+	incremental       bool
+	verbose           bool
+	silent            bool
+	rootCmd           = &cobra.Command{
 		Use:   "regoftw [options]",
 		Short: "regoftw - Recon Tool",
 		Long:  "regoftw - Awesome Recon Tool",
 		Example: `regoftw active -w /tmp/test -d example.com
 regoftw full -w /tmp/test -d example.com
-regoftw active -w /tmp/test -d example.com
+regoftw recon -w /tmp/test -d example.com
 regoftw passive -v -w /tmp/test -D ./targets.txt
 ...`,
 		Version: conf.GetCTX().GetVersion(),
@@ -50,10 +51,11 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&workplace, "output", "o", conf.REGOPATH+"/reports", "regoFTW WorkPlace.")
 	rootCmd.PersistentFlags().StringVarP(&domain, "domain", "d", "", "Domain to analyze")
 	rootCmd.PersistentFlags().StringVarP(&domainsFile, "domains", "D", "", "File with domains to analyze. Absolute path or local path starting with ./")
+	rootCmd.PersistentFlags().StringVarP(&excludeSubdomains, "exclude", "x", "", "File with domains to exclude from scope. Absolute path or local path starting with ./")
 	rootCmd.PersistentFlags().StringVarP(&configFile, "conf", "c", "", "Configuration file. Absolute path or local path starting with ./")
 	rootCmd.PersistentFlags().BoolVarP(&incremental, "incremental", "i", false, "If a previous scanner exists, add any new data found.")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Verbose mode")
-	rootCmd.PersistentFlags().BoolVarP(&silent, "silent", "s", false, "regoftw doesn't show banner")
+	rootCmd.PersistentFlags().BoolVarP(&silent, "silent", "s", false, "regoFTWdoesn't show banner")
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	rootCmd.SilenceErrors = false
 }
