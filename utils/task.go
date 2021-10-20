@@ -102,6 +102,12 @@ func (execute *ExecuteRegoFunction) Run() {
 	wg.Wait()
 }
 
+func (execute *ExecuteRegoFunction) RunWithoutThreads() {
+	for _, f := range execute.Functions {
+		executeStringTask(f.Function, f.Args)
+	}
+}
+
 // Launch various functions with its arguments
 func ExecuteGOListTask(execute ExecuteRegoFunction) {
 	var wg sync.WaitGroup

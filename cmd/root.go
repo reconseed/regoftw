@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 	"regoftw/conf"
+	"regoftw/functions"
 	"regoftw/utils"
 	"strings"
 
@@ -134,6 +135,7 @@ func UpdateConfig() {
 	generateDomains()
 	generateFolders()
 	generateConfig()
+	functions.GenerateResolvers()
 }
 
 func Execute() error {

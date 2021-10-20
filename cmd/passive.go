@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"regoftw/functions"
-	"regoftw/utils"
-
 	"github.com/spf13/cobra"
 )
 
@@ -29,11 +26,11 @@ func runPassiveMode(cmd *cobra.Command, args []string) {
 	// 		"test2", "hello tester"}}
 	// utils.ExecuteOnlineFunctions(urls)
 	// Go option
-	var functionsToExecute utils.ExecuteRegoFunction
+	// var functionsToExecute utils.ExecuteRegoFunction
 	// If we have a good ctx, we probably do not need to pass parameters
-	function := utils.RegoFunction{Function: functions.GenerateResolvers, Args: nil}
-	functionsToExecute.Functions = append(functionsToExecute.Functions, function)
-	functionsToExecute.Run()
+	// function := utils.RegoFunction{Function: functions.GenerateResolvers, Args: nil}
+	// functionsToExecute.Functions = append(functionsToExecute.Functions, function)
+	// functionsToExecute.RunWithoutThreads()
 }
 
 func init() {
