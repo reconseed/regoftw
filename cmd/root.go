@@ -64,7 +64,7 @@ func init() {
 func generateDomains() {
 	if domain == "" && domainsFile == "" {
 		utils.PrintError(`You must specify either --domain (-d) or --domains (-D).
-    An example -> regoftw passive -v -w /tmp/test -D ./targets.txt
+    An example -> regoftw passive -v -o /tmp/test -D ./targets.txt
 		`)
 		os.Exit(1)
 	}
@@ -135,7 +135,7 @@ func UpdateConfig() {
 	generateDomains()
 	generateFolders()
 	generateConfig()
-	functions.GenerateResolvers()
+	functions.GenerateResolvers() // TODO: Use this function only when necessary
 }
 
 func Execute() error {

@@ -15,12 +15,9 @@ func GenerateResolvers() {
 	if err != nil {
 		utils.PrintInfoIfVerbose("We can't check resolvers date")
 	} else {
-		//TODO: Test this
 		modifiedTime := file.ModTime()
-		modifiedTime.Add(24 * time.Hour)
 		now := time.Now()
-
-		if !now.After(modifiedTime) {
+		if !now.After(modifiedTime.Add(24 * time.Hour)) {
 			utils.PrintInfoIfVerbose("We found valid resolvers")
 			return
 		}
