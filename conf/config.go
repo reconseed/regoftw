@@ -52,6 +52,7 @@ type Configuration struct {
 	Timeouts        Timeouts
 	Wordlists       Wordlists
 	Axiomfleet      Axiomfleet
+	Bbrf            Bbrf
 }
 
 type General struct {
@@ -198,4 +199,11 @@ type Axiomfleet struct {
 	COUNT    int    `json:"COUNT"`
 	REGIONS  string `json:"REGIONS"`
 	SHUTDOWN bool   `json:"SHUTDOWN"`
+}
+
+type Bbrf struct {
+	CONNECTION bool   `json:"CONNECTION"`
+	SERVER     string `json:"SERVER"`
+	USERNAME   int    `json:"USERNAME"`
+	PASSWORD   string `json:"PASSWORD"`
 }

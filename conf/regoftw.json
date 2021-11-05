@@ -4,9 +4,9 @@
       "TOOLS": "~/Tools",
       "TOOLPATH": "",
       "UPDATE_RESOLVERS": true,
-      "PROXY_URL": "http://127.0.0.1:8080/",
+      "PROXY_URL": "http://127.0.0.1:8080/"
     },
-    "GOOLANG_VARS": {
+    "GOLANG_VARS": {
         "GOROOT": "/usr/local/go",
         "GOPATH": "$HOME/go",
         "PATH": "$GOPATH/bin:$GOROOT/bin:$HOME/.local/bin:$PATH"
@@ -22,9 +22,12 @@
       "METADATA": true,         
       "EMAILS": true,            
       "DOMAIN_INFO": true,      
+      "IP_INFO": true, 
       "METAFINDER_LIMIT": 20 
     },
     "SUBDOMAINS": {
+      "SUBDOMAINS_GENERAL":true,
+      "SUBPASSIVE":true,
       "SUBCRT":true,
       "SUBANALYTICS":true,
       "SUBBRUTE":true,
@@ -34,7 +37,8 @@
       "SUBRECURSIVE":true,
       "SUB_RECURSIVE_PASSIVE":false,
       "ZONETRANSFER":true,
-      "S3BUCKETS":true
+      "S3BUCKETS":true,
+      "REVERSE_IP":false
     },
     "WEBDETECTION": {
       "WEBPROBESIMPLE": true,        
@@ -53,16 +57,21 @@
     "WEBANALYTICS": {
       "WAF_DETECTION": true,
       "NUCLEICHECK": true,
+      "NUCLEI_SEVERITY": "info,low,medium,high,critical",
       "URL_CHECK": true,
       "URL_GF": true,
       "URL_EXT": true,
       "JSCHECKS": true,
-      "PARAMS": true,
       "FUZZ": true,
       "CMS_SCANNER": true,
-      "WORDLIST": true
+      "WORDLIST": true,
+      "ROBOTSWORDLIST": true,
+      "PASSWORD_DICT": true,
+      "PASSWORD_MIN_LENGTH": 5,
+      "PASSWORD_MAX_LENGTH": 14
     },
     "VULNERABILITIES": {
+      "VULNS_GENERAL": true,
       "XSS": true,
       "CORS": true,
       "TEST_SSL": true,
@@ -74,14 +83,15 @@
       "SQLI": true,
       "BROKENLINKS": true,
       "SPRAY": true,
-      "BYPASSER4XX": true,
-      "COMM_INJ": true
+      "COMM_INJ": true,
+      "PROTO_POLLUTION": true
     },
     "EXTRAFEATURES": {
       "NOTIFICATION": false ,
       "SOFT_NOTIFICATION": false,
       "DEEP": false,
-      "DEEP_LIMIT": 1000,
+      "DEEP_LIMIT": 500,
+      "DEEP_LIMIT2": 1500,
       "DIFF": false,
       "REMOVETMP": false,
       "REMOVELOG": false,
@@ -100,14 +110,17 @@
       "GITDORKER": 5,
       "BRUTESPRAY_TH": 20,
       "BRUTESPRAY_CONCURRENCE": 10,
-      "ARJUN": 20,
       "GAUPLUS": 10,
+      "DNSTAKE": 100,
       "DALFOX": 200,
       "PUREDNS_PUBLIC_LIMIT": 0, 
       "PUREDNS_TRUSTED_LIMIT": 400,
-      "DIRDAR": 200,
+      "PUREDNS_WILDCARDBATCH_LIMIT": 1500000,
       "WEBSCREENSHOT": 200,
-      "RESOLVE_DOMAINS": 150
+      "GOWITNESS": 8,
+      "RESOLVE_DOMAINS": 150,
+      "PPFUZZ": 30,
+      "DNSVALIDATOR": 100
     },
     "TIMEOUTS": { 
       "CMSSCAN": 3600,
@@ -130,6 +143,12 @@
       "COUNT": 5,
       "REGIONS": "",
       "SHUTDOWN": true
+    },
+    "BBRF": {
+      "CONNECTION": false,
+      "SERVER": "https://demo.bbrf.me/bbrf",
+      "USERNAME": "user",
+      "PASSWORD": "password"
     }
   }
 }
